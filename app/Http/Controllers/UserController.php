@@ -3,12 +3,8 @@
 namespace App\Http\Controllers;
 
 use app\Interfaces\UserRepositoryInterface;
-<<<<<<< HEAD
 use app\Resources\PagninateResource;
 use app\Resources\UserResource;
-=======
->>>>>>> create-api
-use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
@@ -22,7 +18,6 @@ class UserController extends Controller
         $this->$userRepository = $userRepository;
     }
 
-<<<<<<< HEAD
     public function index(Request $request)
     {
         try {
@@ -53,11 +48,6 @@ class UserController extends Controller
         } catch (\Exception $e) {
             return ResponseHelper::jsonResponse(false, $e->getMessage(), null, 500);
         }
-=======
-    public function index()
-    {
-        //
->>>>>>> create-api
     }
 
     /**
