@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use app\Interfaces\UserRepositoryInterface;
+use app\Resources\PagninateResource;
+use app\Resources\UserResource;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -17,9 +19,36 @@ class UserController extends Controller
         $this->$userRepository = $userRepository;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        //
+        try {
+
+            $users = $this->userRepository->getAll($request->seach, $request->limit, true);
+
+            return ResponseHelper::jsonResponse(true, 'Data User Berhasil Di Ambil', UserResource::collection($users), 200);
+
+        } catch (\Exception $e) {
+            return ResponseHelper::jsonResponse(false, $e->getMessage(), null, 500);
+        }
+    }
+
+    public function getAllPaginated(Request $request)
+    {
+        $request = $request->validate([
+            'search' => 'null | string',
+            'row_per_page' => 'required | integer',
+        ]);
+        try {
+            $users = $this->userRepository->getAllPaginated(
+                $request['search'] ?? null,
+                $request['row_per_page']
+            );
+
+            return ResponseHelper::jsonResponse(true, 'Data User Berhasil Diambil', PagninateResource::make($users, UserResource::class), 200);
+
+        } catch (\Exception $e) {
+            return ResponseHelper::jsonResponse(false, $e->getMessage(), null, 500);
+        }
     }
 
     /**
