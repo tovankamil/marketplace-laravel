@@ -1,0 +1,28 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use App\Traits\UUID;
+class ProductCategory extends Model
+{
+    //
+    use UUID;
+
+    protected $fillable=[
+        'parent_id',
+        'image',
+        'slug',
+        'tagline',
+        'description',
+
+    ];
+
+
+    public function parent(){
+        return $this->belongsTo(ProductCategory::class,'parent_id','id');
+    }
+    public function childrens(){
+        return $this->hasMany(ProductCategory::class,'parent_id','id');
+    }
+}
