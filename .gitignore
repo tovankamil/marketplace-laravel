@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 *.log
 .DS_Store
 =======
@@ -30,6 +31,8 @@ storage/*.key
 =======
 auth.json
 =======
+=======
+>>>>>>> 10d672b (create model)
 *.log
 .DS_Store
 .env
@@ -56,6 +59,9 @@ Homestead.json
 Homestead.yaml
 Thumbs.db
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> d8f06cc (create model)
 >>>>>>> 59fb202 (create model)
+=======
+>>>>>>> 10d672b (create model)

@@ -53,4 +53,10 @@ class User extends Authenticatable
     public function buyer(){
         return $this->hasOne(Buyer::class);
     }
+
+    public function scopeSearch($query, $search){
+        return $query->where('name','like','%'.$search.'%')
+          ->orWhere('email','like','%'.$search.'%');
+    }
 }
+
