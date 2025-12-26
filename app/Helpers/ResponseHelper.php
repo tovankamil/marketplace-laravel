@@ -4,7 +4,7 @@ namespace App\Helpers;
 use Illuminate\Http\JsonResponse;
 
 
-class ResponseHelpers
+class ResponseHelper
 {
     public static function jsonResponse($succes, $message, $data, $statusCode):jsonResponse
     {

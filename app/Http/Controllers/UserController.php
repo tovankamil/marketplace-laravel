@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use app\Interfaces\UserRepositoryInterface;
-use app\Resources\PagninateResource;
-use app\Resources\UserResource;
+use App\Helpers\ResponseHelper;
+use App\Http\Resources\PaginateResource;
+use App\Http\Resources\UserResource;
+use App\Interfaces\UserRepositoryInterface;
+use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
@@ -15,14 +17,14 @@ class UserController extends Controller
 
     public function __construct(UserRepositoryInterface $userRepository)
     {
-        $this->$userRepository = $userRepository;
+        $this->userRepository = $userRepository;
     }
 
     public function index(Request $request)
     {
         try {
 
-            $users = $this->userRepository->getAll($request->seach, $request->limit, true);
+            $users = $this->userRepository->getAll($request->search, $request->limit, true);
 
             return ResponseHelper::jsonResponse(true, 'Data User Berhasil Di Ambil', UserResource::collection($users), 200);
 
@@ -33,19 +35,27 @@ class UserController extends Controller
 
     public function getAllPaginated(Request $request)
     {
-        $request = $request->validate([
-            'search' => 'null | string',
-            'row_per_page' => 'required | integer',
-        ]);
         try {
+            $validatedData = $request->validate([
+                'search' => 'nullable|string', // FIXED SYNTAX
+                'row_per_page' => 'required|integer', // Cleaned syntax
+            ]);
+            
             $users = $this->userRepository->getAllPaginated(
-                $request['search'] ?? null,
-                $request['row_per_page']
+                // Use the validated array data
+                $validatedData['search'] ?? null, 
+                $validatedData['row_per_page']
             );
 
-            return ResponseHelper::jsonResponse(true, 'Data User Berhasil Diambil', PagninateResource::make($users, UserResource::class), 200);
+            return ResponseHelper::jsonResponse(true, 'Data User Berhasil Diambil', PaginateResource::make($users, UserResource::class), 200);
 
-        } catch (\Exception $e) {
+        } catch (ValidationException $e) {
+            // Handle Laravel's validation errors specifically
+            return ResponseHelper::jsonResponse(false, 'Validation failed', $e->errors(), 422);
+        } 
+        catch (\Exception $e) {
+            // Catch all other unexpected errors
+            \Log::error('Error in getAllPaginated: ' . $e->getMessage());
             return ResponseHelper::jsonResponse(false, $e->getMessage(), null, 500);
         }
     }
