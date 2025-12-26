@@ -1,10 +1,12 @@
 <?php
 
-namespace app\Repositories;
+namespace App\Repositories;
 
 use App\Interfaces\UserRepositoryInterface;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
+use Exception;
 class UserRepository implements UserRepositoryInterface
 {
     public function getAll(?string $search, ?int $limit, bool $execute)
@@ -40,5 +42,26 @@ class UserRepository implements UserRepositoryInterface
         $query = User::where('id',$id);
 
         return $query->first();
+    }
+
+    public function create(array $data){
+        DB::beginTransaction();
+        try {
+            $user = New User;
+            $user->name= $data['name'];
+            $user->email= $data['email'];
+            $user->password = $data['password'];
+            $user->save();
+            
+            DB::commit();
+
+            return $user;
+        } catch (\Exception $e) {
+            //throw $th;
+            DB::rollback();
+            throw new Exception($e->getMessage());
+        
+        }
+
     }
 }

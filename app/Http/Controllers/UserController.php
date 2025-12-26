@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ResponseHelper;
+use App\Http\Requests\UserStoreRequest;
 use App\Http\Resources\PaginateResource;
 use App\Http\Resources\UserResource;
 use App\Interfaces\UserRepositoryInterface;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
 {
@@ -40,10 +42,10 @@ class UserController extends Controller
                 'search' => 'nullable|string', // FIXED SYNTAX
                 'row_per_page' => 'required|integer', // Cleaned syntax
             ]);
-            
+
             $users = $this->userRepository->getAllPaginated(
                 // Use the validated array data
-                $validatedData['search'] ?? null, 
+                $validatedData['search'] ?? null,
                 $validatedData['row_per_page']
             );
 
@@ -52,10 +54,10 @@ class UserController extends Controller
         } catch (ValidationException $e) {
             // Handle Laravel's validation errors specifically
             return ResponseHelper::jsonResponse(false, 'Validation failed', $e->errors(), 422);
-        } 
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             // Catch all other unexpected errors
-            \Log::error('Error in getAllPaginated: ' . $e->getMessage());
+            \Log::error('Error in getAllPaginated: '.$e->getMessage());
+
             return ResponseHelper::jsonResponse(false, $e->getMessage(), null, 500);
         }
     }
@@ -63,9 +65,22 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(UserStoreRequest $request)
     {
         //
+        $validatedData = $request->validated();
+
+        try {
+            $user = $this->userRepository->create($validatedData);
+
+            return ResponseHelper::jsonResponse(true, 'Data User Berhasil Ditambahakan', new UserResource($user), 201);
+
+        } catch (\Exception $e) {
+            // Catch all other unexpected errors
+            \Log::error('Error in getAllPaginated: '.$e->getMessage());
+
+            return ResponseHelper::jsonResponse(false, 'Error input user baru', null, 500);
+        }
     }
 
     /**
@@ -73,7 +88,24 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        //
+        try {
+            $id = (string) $id;
+            $user = $this->userRepository->getById($id);
+            if (! $user) {
+                return ResponseHelper::jsonResponse(false, 'Data User Tidak Dapat Diketemukan', null, 404);
+            }
+
+            return ResponseHelper::jsonResponse(true, 'Data User Berhasil Diambil', new UserResource($user), 200);
+
+        } catch (ValidationException $e) {
+            // Handle Laravel's validation errors specifically
+            return ResponseHelper::jsonResponse(false, 'Validation failed', $e->errors(), 422);
+        } catch (\Exception $e) {
+            // Catch all other unexpected errors
+            \Log::error('Error in getAllPaginated: '.$e->getMessage());
+
+            return ResponseHelper::jsonResponse(false, 'error', null, 500);
+        }
     }
 
     /**
