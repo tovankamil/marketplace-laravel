@@ -150,10 +150,10 @@ class UserController extends Controller
             if (! $user) {
                 return ResponseHelper::jsonResponse(false, 'Data User Tidak Dapat Diketemukan', null, 404);
             }
-
+            $deletedUserResource = new UserResource($user);
             $user = $this->userRepository->delete($id);
 
-            return ResponseHelper::jsonResponse(true, 'Data User Berhasil Di Hapus', null, 200);
+            return ResponseHelper::jsonResponse(true, 'Data User Berhasil Di Hapus', $deletedUserResource, 200);
 
         } catch (\Exception $e) {
             // Catch all other unexpected errors
