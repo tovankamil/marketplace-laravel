@@ -2,9 +2,9 @@
 
 namespace app\Repositories;
 
-use app\Interfaces\UserRepositoryInterface;
-use app\Models\User;
-
+use App\Interfaces\UserRepositoryInterface;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 class UserRepository implements UserRepositoryInterface
 {
     public function getAll(?string $search, ?int $limit, bool $execute)
@@ -14,12 +14,14 @@ class UserRepository implements UserRepositoryInterface
                 $query->search($search);
             }
         });
+
         if ($limit) {
             $query->take($limit);
         }
         if ($execute) {
             return $query->get();
         }
+        return $query;
     }
 
     public function getAllPaginated(?string $search, ?int $rowPerPage)
@@ -31,7 +33,7 @@ class UserRepository implements UserRepositoryInterface
             false,
         );
 
-        return $query->paginated($rowPerPage);
+        return $query->paginate($rowPerPage);
     }
 
     public function getById(?string $id) {
