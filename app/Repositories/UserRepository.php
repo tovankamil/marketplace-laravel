@@ -22,8 +22,9 @@ class UserRepository implements UserRepositoryInterface
         }
     }
 
-    public function getAllPaginated(?string $search, ?int $rowPerPage) {
-        
+    public function getAllPaginated(?string $search, ?int $rowPerPage)
+    {
+
         $query = $this->getAll(
             $search,
             null,
@@ -31,5 +32,11 @@ class UserRepository implements UserRepositoryInterface
         );
 
         return $query->paginated($rowPerPage);
+    }
+
+    public function getById(?string $id) {
+        $query = User::where('id',$id);
+
+        return $query->first();
     }
 }
