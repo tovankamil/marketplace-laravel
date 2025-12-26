@@ -4,9 +4,9 @@ namespace App\Repositories;
 
 use App\Interfaces\UserRepositoryInterface;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\DB;
 use Exception;
+use Illuminate\Support\Facades\DB;
+
 class UserRepository implements UserRepositoryInterface
 {
     public function getAll(?string $search, ?int $limit, bool $execute)
@@ -23,6 +23,7 @@ class UserRepository implements UserRepositoryInterface
         if ($execute) {
             return $query->get();
         }
+
         return $query;
     }
 
@@ -38,30 +39,74 @@ class UserRepository implements UserRepositoryInterface
         return $query->paginate($rowPerPage);
     }
 
-    public function getById(?string $id) {
-        $query = User::where('id',$id);
+    public function getById(?string $id)
+    {
+        $query = User::where('id', $id);
 
         return $query->first();
     }
 
-    public function create(array $data){
+    public function create(array $data)
+    {
         DB::beginTransaction();
         try {
-            $user = New User;
-            $user->name= $data['name'];
-            $user->email= $data['email'];
+
+            $user->name = $data['name'];
+            $user->email = $data['email'];
             $user->password = $data['password'];
             $user->save();
-            
+
             DB::commit();
 
             return $user;
         } catch (\Exception $e) {
-            //throw $th;
+            // throw $th;
             DB::rollback();
             throw new Exception($e->getMessage());
-        
         }
+    }
 
+    public function update(?string $id, array $data)
+    {
+        DB::beginTransaction();
+        try {
+
+            $user = User::find($id);
+            $user->name = $data['name'];
+
+            if (isset($data['password'])) {
+                $user->password = $data['password'];
+            }
+
+            $user->save();
+
+            DB::commit();
+
+            return $user;
+        } catch (\Exception $e) {
+            // throw $th;
+            DB::rollback();
+            throw new Exception($e->getMessage());
+        }
+    }
+
+    public function delete(?string $id)
+    {
+        DB::beginTransaction();
+
+        try {
+            $user = User::find($id);
+            if (! $user) {
+                DB::rollback();
+                throw new Exception("User with ID $id not found for deletion.");
+            }
+            $user->delete();
+
+            DB::commit();
+
+        } catch (\Throwable $th) {
+            DB::rollback();
+            throw new Exception($e->getMessage());
+        }
     }
 }

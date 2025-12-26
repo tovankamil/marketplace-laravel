@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\ResponseHelper;
 use App\Http\Requests\UserStoreRequest;
+use App\Http\Requests\UserUpdateRequest;
 use App\Http\Resources\PaginateResource;
 use App\Http\Resources\UserResource;
 use App\Interfaces\UserRepositoryInterface;
@@ -111,9 +112,29 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UserUpdateRequest $request, string $id)
     {
-        //
+
+        $validatedData = $request->validated();
+
+        try {
+
+            $user = $this->userRepository->getById($id);
+
+            if (! $user) {
+                return ResponseHelper::jsonResponse(false, 'Data User Tidak Dapat Diketemukan', null, 404);
+            }
+
+            $user = $this->userRepository->update($id, $validatedData);
+
+            return ResponseHelper::jsonResponse(true, 'Data User Berhasil Di Update', new UserResource($user), 200);
+
+        } catch (\Exception $e) {
+            // Catch all other unexpected errors
+            \Log::error('Error in update: '.$e->getMessage());
+
+            return ResponseHelper::jsonResponse(false, 'Error Input User Baru', null, 500);
+        }
     }
 
     /**
@@ -121,6 +142,24 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        
+        try {
+
+            $user = $this->userRepository->getById($id);
+
+            if (! $user) {
+                return ResponseHelper::jsonResponse(false, 'Data User Tidak Dapat Diketemukan', null, 404);
+            }
+
+            $user = $this->userRepository->delete($id);
+
+            return ResponseHelper::jsonResponse(true, 'Data User Berhasil Di Hapus', null, 200);
+
+        } catch (\Exception $e) {
+            // Catch all other unexpected errors
+            \Log::error('Error in Delete: '.$e->getMessage());
+
+            return ResponseHelper::jsonResponse(false, 'Error Hapus User ', null, 500);
+        }
     }
 }
