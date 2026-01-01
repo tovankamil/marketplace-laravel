@@ -4,8 +4,9 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use App\Interfaces\UserRepositoryInterface;
-use App\Repositories\UserRepository; // Karakter non-cetak/spasi berlebih di awal telah dihapus
-
+use App\Interfaces\StoreRepositoryInterface;
+use App\Repositories\UserRepository; 
+use App\Repositories\StoreRepository; 
 class RepositoryServiceProvider extends ServiceProvider
 {
     /**
@@ -15,6 +16,7 @@ class RepositoryServiceProvider extends ServiceProvider
     {
         // Mengikat interface ke implementasi
         $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
+        $this->app->bind(StoreRepositoryInterface::class, StoreRepository::class);
     }
 
     /**

@@ -19,9 +19,9 @@ return new class extends Migration
             $table->string('logo');
             $table->text('about');
             $table->string('phone');
-            $table->string('adddres_id');
+            $table->string('address_id');
             $table->string('city');
-            $table->text('address');
+            $table->text('address')->nullable();
             $table->string('postal_code');
             $table->boolean('is_verified')->default(false);
             $table->timestamps();

@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Traits\UUID;
+use Illuminate\Database\Eloquent\Builder;
 class Store extends Model
 {
     //
-    use UUID;
+    use UUID , HasFactory;
 
     protected $fillable=[
         'user_id',
@@ -31,5 +33,12 @@ class Store extends Model
     }
      public function transactions(){
         return $this->hasMany(Transaction::class);
+    }
+
+      public function scopeSearch(Builder $query, string $search)
+    {
+        // Cleaned up syntax for readability
+        return $query->where('name', 'like', '%'.$search.'%')
+            ->orWhere('phone', 'like', '%'.$search.'%');
     }
 }

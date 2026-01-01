@@ -1,0 +1,30 @@
+<?php
+
+namespace App\Http\Resources;
+
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class StoreResource extends JsonResource
+{
+    /**
+     * Transform the resource into an array.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(Request $request): array
+    {
+        return [
+            'id' => $this->id,
+            'user'=> New UserResource($this->user),
+            'name' => $this->name,
+            'logo' =>asset('storage/',$this->logo),
+            'about'=>$this->about,
+            'phone' =>$this->phone,
+            'address_id' =>$this->address_id,
+            'city' =>$this->city,
+            'postal_code' => $this->postal_code,
+            'is_verified' => $this->is_verified
+        ];
+    }
+}
