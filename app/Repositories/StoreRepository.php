@@ -5,6 +5,8 @@ namespace App\Repositories;
 use App\Interfaces\StoreRepositoryInterface;
 use App\Models\Store;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB; 
+use Exception;
 
 class StoreRepository implements StoreRepositoryInterface
 {
@@ -66,12 +68,13 @@ class StoreRepository implements StoreRepositoryInterface
             $store->address= $data['address'];
             $store->postal_code= $data['postal_code'];
             $store->save();
-            $store->storeBallance()->create([['balance'=>0]]);
+            $store->storeBallance()->create(['balance'=>0]);
 
             DB::commit();
             return $store;
 
         } catch (\Exception $e) {
+            DB::rollBack();
             throw new Exception($e->getMessage());
         }
     }

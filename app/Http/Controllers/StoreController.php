@@ -9,6 +9,7 @@ use App\Http\Resources\StoreResource;
 use App\Interfaces\StoreRepositoryInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class StoreController extends Controller
 {
@@ -79,13 +80,13 @@ class StoreController extends Controller
         $validatedData = $request->validated();
 
         try {
-            $store = $this->storeRepository->create($validatedData);
+            $stores = $this->storeRepository->create($validatedData);
 
-            return ResponseHelper::jsonResponse(true, 'Data store Berhasil Ditambahakan', new StoreResource($store), 201);
+            return ResponseHelper::jsonResponse(true, 'Data store Berhasil Ditambahakan', new StoreResource($stores), 201);
 
         } catch (\Exception $e) {
             // Catch all other unexpected errors
-            \Log::error('Error in getAllPaginated: '.$e->getMessage());
+           \Log::error('Error in store: '.$e->getMessage(), ['trace' => $e->getTraceAsString()]);
 
             return ResponseHelper::jsonResponse(false, 'Error input store baru', null, 500);
         }
@@ -110,7 +111,7 @@ class StoreController extends Controller
             return ResponseHelper::jsonResponse(false, 'Validation failed', $e->errors(), 422);
         } catch (\Exception $e) {
             // Catch all other unexpected errors
-            \Log::error('Error in getAllPaginated: '.$e->getMessage());
+            \Log::error('Error in show: '.$e->getMessage(), ['trace' => $e->getTraceAsString()]);
 
             return ResponseHelper::jsonResponse(false, 'error', null, 500);
         }

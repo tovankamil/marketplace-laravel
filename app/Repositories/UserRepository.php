@@ -50,7 +50,7 @@ class UserRepository implements UserRepositoryInterface
     {
         DB::beginTransaction();
         try {
-
+            $user = new User;
             $user->name = $data['name'];
             $user->email = $data['email'];
             $user->password = $data['password'];

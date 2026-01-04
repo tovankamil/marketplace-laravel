@@ -29,7 +29,7 @@ class Store extends Model
     }
 
     public function storeBallance(){
-        return $this->hasOne(StoreBallance::class);
+        return $this->hasOne(StoreBalance::class);
     }
      public function transactions(){
         return $this->hasMany(Transaction::class);

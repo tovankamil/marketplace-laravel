@@ -10,6 +10,8 @@ use App\Http\Resources\UserResource;
 use App\Interfaces\UserRepositoryInterface;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Log;
+
 
 class UserController extends Controller
 {
@@ -70,6 +72,9 @@ class UserController extends Controller
     {
         //
         $validatedData = $request->validated();
+        Log::info('User Controlller: Starting store query.', [
+            'validatedData' => $validatedData,
+        ]);
 
         try {
             $user = $this->userRepository->create($validatedData);
