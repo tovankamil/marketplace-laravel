@@ -142,7 +142,7 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        
+
         try {
 
             $user = $this->userRepository->getById($id);
